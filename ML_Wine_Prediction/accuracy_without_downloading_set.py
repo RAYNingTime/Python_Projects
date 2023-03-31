@@ -1,5 +1,5 @@
 # Code made by Ivan Kosiakov (U214N1534) on 30.03.2023
-
+# pip install scikit-learn numpy matplotlib
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
