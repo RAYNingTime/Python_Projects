@@ -45,3 +45,45 @@ plt.ylabel('Accuracy Score')
 plt.xlabel('Maximum Depth')
 plt.legend(loc='upper left')
 plt.show()
+
+"""
+Results:
+
+Runs = 100
+Max_depth = None
+Average accuracy: 0.926
+Minimal accuracy: 0.889
+Maximal accuracy: 0.963
+
+"""
+
+# Note: The code below was used to calculate the results provided earlier. 
+# Please note that the results may vary if you run the code again due to factors such 
+# as randomization or changes in the input data. Feel free to uncomment the code and try it out yourself.
+
+"""
+# Accuracy is always between 0 and 1
+max_accuracy = 0
+min_accuracy = 1
+
+accuracy_sum = 0
+for i in range(100):
+    clf_result = DecisionTreeClassifier()
+    clf_result.fit(X_train, y_train)
+
+    # Test decision tree classifier and calculate accuracy
+    y_result_pred = clf_result.predict(X_test)
+    current_accuracy = accuracy_score(y_test, y_result_pred)
+    if (current_accuracy <= min_accuracy):
+        min_accuracy = current_accuracy
+
+    if (current_accuracy >= max_accuracy):
+        max_accuracy = current_accuracy
+
+    accuracy_sum += current_accuracy
+accuracy_sum = accuracy_sum / 100
+print(f"Average accuracy of a 100 of 0.3 test set with none max_depth is {accuracy_sum:.3f}")
+print(f"Minimal accuracy is {min_accuracy:.3f}")
+print(f"Maximal accuracy is {max_accuracy:.3f}")
+
+"""
