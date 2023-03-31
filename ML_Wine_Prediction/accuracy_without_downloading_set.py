@@ -1,22 +1,28 @@
 # Code made by Ivan Kosiakov (U214N1534) on 30.03.2023
+# Libs to install
 # pip install scikit-learn numpy matplotlib
+
+# Libraries
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
-# Dataset
+# Datasets
 from sklearn.datasets import load_wine
+from sklearn.datasets import load_iris
 # Super Bonus Visualization
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Reading the data set
+# Reading the data set from dataset
 data = load_wine()
+# data = load_iris()
 
 # Using 70% and the rest, save it for testing
-X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=0.3)
+current_test_size = 0.3
+X_train, X_test, y_train, y_test = train_test_split(data.data, data.target, test_size=current_test_size)
 
 # Setting up a max depth for plot
-max_depths = np.arange(1, 21)
+max_depths = np.arange(1, 31)
 
 # Pre-created arrays to save the result of the calculations
 train_scores = []
@@ -43,7 +49,7 @@ plt.plot(max_depths, test_scores, label='Test')
 plt.plot(max_depths, train_scores, label='Train')
 plt.ylabel('Accuracy Score')
 plt.xlabel('Maximum Depth')
-plt.legend(loc='upper left')
+plt.legend(loc='best')
 plt.show()
 
 """
@@ -57,8 +63,8 @@ Maximal accuracy: 0.963
 
 """
 
-# Note: The code below was used to calculate the results provided earlier. 
-# Please note that the results may vary if you run the code again due to factors such 
+# Note: The code below was used to calculate the results provided earlier.
+# Please note that the results may vary if you run the code again due to factors such
 # as randomization or changes in the input data. Feel free to uncomment the code and try it out yourself.
 
 """
@@ -66,8 +72,9 @@ Maximal accuracy: 0.963
 max_accuracy = 0
 min_accuracy = 1
 
+amount_of_runs = 100
 accuracy_sum = 0
-for i in range(100):
+for i in range(amount_of_runs):
     clf_result = DecisionTreeClassifier()
     clf_result.fit(X_train, y_train)
 
@@ -81,9 +88,9 @@ for i in range(100):
         max_accuracy = current_accuracy
 
     accuracy_sum += current_accuracy
-accuracy_sum = accuracy_sum / 100
-print(f"Average accuracy of a 100 of 0.3 test set with none max_depth is {accuracy_sum:.3f}")
+accuracy_sum = accuracy_sum / amount_of_runs
+print(f"Average accuracy of a {amount_of_runs} of {current_test_size} "
+      f"test set with none max_depth is {accuracy_sum:.3f}")
 print(f"Minimal accuracy is {min_accuracy:.3f}")
 print(f"Maximal accuracy is {max_accuracy:.3f}")
-
 """
