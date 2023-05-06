@@ -1,59 +1,38 @@
-import numpy as np
+# Made by Ivan Kosiakov (U214N1534) on 06/05/2023
+
 from sklearn import datasets
-from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.model_selection import cross_validate
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 
-def evaluation_metrics(y_true, y_pred):
-    # Calculate the evaluation metrics
-    tp = np.sum(np.logical_and(y_true == 1, y_pred == 1))
-    fp = np.sum(np.logical_and(y_true == 0, y_pred == 1))
-    tn = np.sum(np.logical_and(y_true == 0, y_pred == 0))
-    fn = np.sum(np.logical_and(y_true == 1, y_pred == 0))
-
-    accuracy = (tp + tn) / (tp + fp + tn + fn)
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
-    f_measure = 2 * precision * recall / (precision + recall)
-
-    return accuracy, precision, recall, f_measure
-
-def configurateDB (db, db_name):
+def configurateDB (ds, ds_name):
     # Split the dataset into training and testing sets
-    db_X_train, db_X_test, db_y_train, db_y_test = train_test_split(db.data, db.target, test_size=0.4, random_state=42)
+    X, y = ds.data, ds.target
 
     # Define the kNN classifier and set the number of neighbors
     knn = KNeighborsClassifier(n_neighbors=5)
 
-    # Fit the kNN classifier with the dataset
-    knn.fit(db_X_train, db_y_train)
-
-    # Perform 10-fold cross-validation for the kNN classifier on the dataset
-    knn_scores = cross_val_score(knn, db_X_train, db_y_train, cv=10)
-    knn_accuracy, knn_precision, knn_recall, knn_f_measure = evaluation_metrics(db_y_test, knn.predict(db_X_test))
-
-    print("\n ==== ==== " + db_name + " Dataset output ==== ====")
-    print("\nkNN Classifier Evaluation Metrics on the " + db_name + " Dataset:")
-    print("Accuracy:", knn_accuracy)
-    print("Precision:", knn_precision)
-    print("Recall:", knn_recall)
-    print("F-measure:", knn_f_measure)
-
     # Define the support vector machine classifier and set the kernel and regularization parameter
     svm = SVC(kernel='linear', C=1.0)
 
-    # Fit the SVM classifier with the dataset
-    svm.fit(db_X_train, db_y_train)
+    scoring = ['accuracy', 'precision_macro', 'recall_macro', 'f1_macro']
 
-    # Perform 10-fold cross-validation for the SVM classifier on the wines dataset
-    svm_scores = cross_val_score(svm, db_X_train, db_y_train, cv=10)
-    svm_accuracy, svm_precision, svm_recall, svm_f_measure = evaluation_metrics(db_y_test, svm.predict(db_X_test))
+    # Fit the kNN classifier with the dataset
+    cv_knn = cross_validate(knn, X, y, cv=10, scoring=scoring)
+    cv_svc = cross_validate(svm, X, y, cv=10, scoring=scoring)
 
-    print("\nSVM Classifier Evaluation Metrics on the " + db_name + " Dataset:")
-    print("Accuracy:", svm_accuracy)
-    print("Precision:", svm_precision)
-    print("Recall:", svm_recall)
-    print("F-measure:", svm_f_measure)
+    print("\n ==== ==== ==== ====")
+    print("\nkNN Classifier Evaluation Metrics on the " + ds_name + " Dataset:")
+    print("Accuracy:", cv_knn['test_accuracy'].mean())
+    print("Precision:", cv_knn['test_precision_macro'].mean())
+    print("Recall:", cv_knn['test_recall_macro'].mean())
+    print("F-measure:", cv_knn['test_f1_macro'].mean())
+
+    print("\nSVM Classifier Evaluation Metrics on the " + ds_name + " Dataset:")
+    print("Accuracy:", cv_svc['test_accuracy'].mean())
+    print("Precision:", cv_svc['test_precision_macro'].mean())
+    print("Recall:", cv_svc['test_recall_macro'].mean())
+    print("F-measure:", cv_svc['test_f1_macro'].mean())
 
 
 # Load the wines dataset
@@ -65,3 +44,34 @@ iris = datasets.load_iris()
 configurateDB(wines, "Wines")
 configurateDB(iris, "Iris")
 
+# kNN Classifier Evaluation Metrics on the Wines Dataset:
+# Accuracy: 0.6754901960784313
+# Precision: 0.6652320827320827
+# Recall: 0.6584920634920635
+# F-measure: 0.645921660039307
+#
+# SVM Classifier Evaluation Metrics on the Wines Dataset:
+# Accuracy: 0.9555555555555555
+# Precision: 0.9642195767195767
+# Recall: 0.9573015873015873
+# F-measure: 0.9556129981129982
+#
+#  ==== ==== ==== ====
+#
+# kNN Classifier Evaluation Metrics on the Iris Dataset:
+# Accuracy: 0.9666666666666668
+# Precision: 0.9738095238095239
+# Recall: 0.9666666666666666
+# F-measure: 0.9659090909090908
+#
+# SVM Classifier Evaluation Metrics on the Iris Dataset:
+# Accuracy: 0.9733333333333334
+# Precision: 0.9793650793650794
+# Recall: 0.9733333333333333
+# F-measure: 0.9726430976430975
+
+# Based on the evaluation results, it can be concluded that the SVM algorithm performed
+# slightly better than the KNN algorithm in classifying the wine and iris datasets. The
+# evaluation was done using 10-fold cross-validation and four performance metrics: Accuracy,
+# Precision, Recall, and F-Measure. Therefore, for these particular datasets, the SVM algorithm
+# is the most suitable for classification.
