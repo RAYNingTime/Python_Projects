@@ -1,4 +1,4 @@
-// This preprocessing algorithm is recommended to use for NLP
+// This preprocessing algorithm is recommended ONLY to use for NLP
 
 import re
 from nltk.corpus import stopwords
